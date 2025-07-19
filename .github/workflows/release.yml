@@ -26,8 +26,7 @@ jobs:
             -f net9.0 \
             -r ${{ matrix.rid }} \
             --self-contained true \
-            /p:PublishSingleFile=true \
-            /p:EnableCompressionInSingleFile=true
+            /p:PublishSingleFile=true
 
       - name: Zip output
         run: |

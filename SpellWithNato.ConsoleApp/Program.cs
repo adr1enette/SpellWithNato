@@ -14,12 +14,14 @@ internal class Program
 
     private const int ReservedLinesCount = 7;
     private static string _input = string.Empty;
-    private static string _previous = string.Empty;
+    private static int _previousLength = 0;
 
     private static void Main()
     {
         Console.CancelKeyPress += (_, _) => Console.CursorVisible = true;
         Console.CursorVisible = false;
+
+        RenderUi();
 
         while (true)
         {
@@ -30,42 +32,52 @@ internal class Program
                 break;
             }
 
-            if (key.Key == ConsoleKey.Backspace && _input.Length > 0)
-            {
-                _input = key.Modifiers.HasFlag(ConsoleModifiers.Control) ? string.Empty : _input[..^1];
-            }
-            else
-            {
-                var upperChar = char.ToUpperInvariant(key.KeyChar);
-                if (upperChar is >= 'A' and <= 'Z' && _input.Length < Console.WindowHeight - ReservedLinesCount)
-                {
-                    _input += key.KeyChar;
-                }
-            }
+            UpdateInput(key);
 
-            if (_input == _previous) continue;
-
-            _previous = _input;
-
-            AnsiConsole.Clear();
-            AnsiConsole.MarkupLine("[bold green]Enter text (Esc to exit):[/]");
-            AnsiConsole.MarkupLine($"[bold yellow]{_input}[/]");
-
-            if (_input.Length <= 0) continue;
-
-            var table = new Table()
-                .AddColumn("[underline]Char[/]")
-                .AddColumn("[underline]NATO Word[/]");
-
-            foreach (var c in _input.ToUpperInvariant())
-            {
-                if (c is >= 'A' and <= 'Z')
-                {
-                    table.AddRow($"[blue]{c}[/]", $"[white]{NatoPhoneticAlphabet[c - 'A']}[/]");
-                }
-            }
-
-            AnsiConsole.Write(table);
+            if (_input.Length == _previousLength) continue;
+            _previousLength = _input.Length;
+            RenderUi();
         }
+    }
+
+    private static void UpdateInput(ConsoleKeyInfo key)
+    {
+        if (key.Key == ConsoleKey.Backspace && _input.Length > 0)
+        {
+            _input = key.Modifiers.HasFlag(ConsoleModifiers.Control)
+                ? string.Empty
+                : _input[..^1];
+        }
+        else
+        {
+            var upperChar = char.ToUpperInvariant(key.KeyChar);
+            if (upperChar is >= 'A' and <= 'Z' && _input.Length < Console.WindowHeight - ReservedLinesCount)
+            {
+                _input += key.KeyChar;
+            }
+        }
+    }
+
+    private static void RenderUi()
+    {
+        AnsiConsole.Clear();
+        AnsiConsole.MarkupLine("[bold green]Enter text (Esc to exit):[/]");
+        AnsiConsole.MarkupLine($"[bold yellow]{_input}[/]");
+
+        if (_input.Length == 0) return;
+
+        var table = new Table()
+            .AddColumn("[underline]Char[/]")
+            .AddColumn("[underline]NATO Word[/]");
+
+        foreach (var c in _input.ToUpperInvariant())
+        {
+            if (c is >= 'A' and <= 'Z')
+            {
+                table.AddRow($"[blue]{c}[/]", $"[white]{NatoPhoneticAlphabet[c - 'A']}[/]");
+            }
+        }
+
+        AnsiConsole.Write(table);
     }
 }

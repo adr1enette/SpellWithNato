@@ -72,10 +72,7 @@ internal class Program
 
         foreach (var c in _input.ToUpperInvariant())
         {
-            if (c is >= 'A' and <= 'Z')
-            {
-                table.AddRow($"[blue]{c}[/]", $"[white]{NatoPhoneticAlphabet[c - 'A']}[/]");
-            }
+            table.AddRow($"[blue]{c}[/]", $"[white]{NatoPhoneticAlphabet[c - 'A']}[/]");
         }
 
         AnsiConsole.Write(table);

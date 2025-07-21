@@ -14,7 +14,7 @@ internal class Program
 
     private const int ReservedLinesCount = 7;
     private static string _input = string.Empty;
-    private static int _previousLength = 0;
+    private static int _previousLength;
 
     private static void Main()
     {

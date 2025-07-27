@@ -45,10 +45,15 @@ jobs:
               -o publish/$rid
           done
 
-      - name: Create Release and Upload Assets
+      - name: Create Release
+        id: create_release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ github.ref_name }}
+
+      - name: Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
           files: |
             publish/win-x64/*
             publish/win-arm64/*
@@ -56,3 +61,5 @@ jobs:
             publish/linux-arm64/*
             publish/osx-x64/*
             publish/osx-arm64/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
